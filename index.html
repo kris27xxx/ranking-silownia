@@ -1,11 +1,248 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <title>Ranking siłownia</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Asgard Gym — Ranking</title>
+
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #0b0f14;
+      color: #e6edf3;
+      padding: 24px;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; }
+    .brand { display:flex; align-items:center; gap:14px; margin-bottom: 18px; }
+    .logo {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: #111826; border: 1px solid #223047;
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 800;
+    }
+    h1 { margin: 0; font-size: 28px; letter-spacing: 0.4px; }
+    .sub { margin-top: 6px; color:#a9b7c6; }
+
+    .card {
+      margin-top: 18px;
+      background: #0f1623;
+      border: 1px solid #223047;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+    select {
+      background: #0b0f14;
+      color: #e6edf3;
+      border: 1px solid #223047;
+      border-radius: 10px;
+      padding: 10px 12px;
+      min-width: 320px;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid #223047; }
+    th { text-align:left; color:#a9b7c6; font-weight:600; }
+    td.rank { width: 80px; font-weight:800; }
+    tr.top1 td.rank { color: #ffd700; }
+    tr.top2 td.rank { color: #c0c0c0; }
+    tr.top3 td.rank { color: #cd7f32; }
+
+    .muted { color:#a9b7c6; }
+    .error { color:#ff7b7b; white-space: pre-wrap; }
+    .loading { color:#a9b7c6; }
+    .note { margin-top: 10px; color:#a9b7c6; font-size: 13px; }
+  </style>
 </head>
 <body>
-  <h1>Ranking siłownia – test</h1>
-  <p>Jeżeli to widzisz, GitHub Pages działa.</p>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">AG</div>
+      <div>
+        <h1>ASGARD GYM</h1>
+        <div class="sub" id="headerLine">Ładowanie challengu…</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="muted">Wybierz challenge (aktualny + archiwum)</div>
+        </div>
+        <select id="challengeSelect" disabled></select>
+      </div>
+
+      <div id="status" class="loading" style="margin-top:12px;">Ładowanie danych…</div>
+
+      <table id="scoreTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Miejsce</th>
+            <th>Zawodnik</th>
+            <th>Wynik</th>
+          </tr>
+        </thead>
+        <tbody id="scoreBody"></tbody>
+      </table>
+
+      <div id="err" class="error" style="display:none;"></div>
+
+      <div class="note">
+        Edycja wyników jest robiona w panelu Supabase (publicznie strona jest tylko do podglądu).
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+    // Twoje dane (wklejone zgodnie z tym co podałeś)
+    const SUPABASE_URL = "https://bzjtdwsvnhukmcjdvyen.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6anRkd3N2bmh1a21jamR2eWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzc5NDgsImV4cCI6MjA4MTY1Mzk0OH0.o-W4nvYWzvEfxzIX2qJyDEhD21ncMVNBycFzinw7foo";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const headerLine = document.getElementById("headerLine");
+    const sel = document.getElementById("challengeSelect");
+    const statusEl = document.getElementById("status");
+    const table = document.getElementById("scoreTable");
+    const tbody = document.getElementById("scoreBody");
+    const errEl = document.getElementById("err");
+
+    function showError(msg) {
+      errEl.style.display = "block";
+      errEl.textContent = msg;
+      statusEl.style.display = "none";
+      table.style.display = "none";
+    }
+
+    function setLoading(msg) {
+      statusEl.style.display = "block";
+      statusEl.textContent = msg;
+      errEl.style.display = "none";
+      table.style.display = "none";
+    }
+
+    function renderScores(rows) {
+      tbody.innerHTML = "";
+      for (const r of rows) {
+        const tr = document.createElement("tr");
+        if (r.position === 1) tr.classList.add("top1");
+        if (r.position === 2) tr.classList.add("top2");
+        if (r.position === 3) tr.classList.add("top3");
+
+        tr.innerHTML = `
+          <td class="rank">${r.position ?? ""}</td>
+          <td>${r.athlete ?? ""}</td>
+          <td><strong>${r.score ?? ""}</strong> <span class="muted">${r.unit ?? ""}</span></td>
+        `;
+        tbody.appendChild(tr);
+      }
+      statusEl.style.display = "none";
+      table.style.display = "table";
+    }
+
+    async function loadChallenges() {
+      setLoading("Ładowanie listy challengy…");
+
+      const { data, error } = await supabase
+        .from("challenges")
+        .select("id,title,period,is_active")
+        .order("is_active", { ascending: false })
+        .order("id", { ascending: false });
+
+      if (error) throw error;
+      return data ?? [];
+    }
+
+    async function loadScores(challengeId) {
+      setLoading("Ładowanie TOP 10…");
+
+      const { data, error } = await supabase
+        .from("scores")
+        .select("athlete,score,unit,position")
+        .eq("challenge_id", challengeId)
+        .order("position", { ascending: true })
+        .limit(10);
+
+      if (error) throw error;
+
+      // awaryjnie, jeśli ktoś nie wypełni "position"
+      const rows = data ?? [];
+      const hasPositions = rows.some(x => x.position != null);
+      if (!hasPositions && rows.length > 0) {
+        rows.sort((a,b) => (Number(b.score) || 0) - (Number(a.score) || 0));
+        rows.forEach((r, i) => r.position = i + 1);
+      }
+
+      return rows;
+    }
+
+    function updateHeader(ch) {
+      if (!ch) return;
+      headerLine.textContent = `${ch.title} — ${ch.period}${ch.is_active ? " (AKTUALNY)" : ""}`;
+    }
+
+    function fillSelect(challenges) {
+      sel.innerHTML = "";
+      for (const ch of challenges) {
+        const opt = document.createElement("option");
+        opt.value = ch.id;
+        opt.textContent = `${ch.title} — ${ch.period}${ch.is_active ? " (AKTUALNY)" : ""}`;
+        sel.appendChild(opt);
+      }
+      sel.disabled = false;
+    }
+
+    async function init() {
+      try {
+        const challenges = await loadChallenges();
+
+        if (challenges.length === 0) {
+          showError("Brak danych w tabeli 'challenges'. Dodaj pierwszy challenge w Supabase.");
+          return;
+        }
+
+        fillSelect(challenges);
+
+        const active = challenges.find(c => c.is_active) ?? challenges[0];
+        sel.value = String(active.id);
+        updateHeader(active);
+
+        const scores = await loadScores(active.id);
+        if (scores.length === 0) {
+          statusEl.style.display = "block";
+          statusEl.textContent = "Brak wyników dla tego challengu. Dodaj TOP 10 w tabeli 'scores'.";
+          table.style.display = "none";
+        } else {
+          renderScores(scores);
+        }
+
+        sel.addEventListener("change", async () => {
+          const chosenId = Number(sel.value);
+          const chosen = challenges.find(c => c.id === chosenId);
+          updateHeader(chosen);
+
+          const rows = await loadScores(chosenId);
+          if (rows.length === 0) {
+            statusEl.style.display = "block";
+            statusEl.textContent = "Brak wyników dla tego challengu. Dodaj TOP 10 w tabeli 'scores'.";
+            table.style.display = "none";
+          } else {
+            renderScores(rows);
+          }
+        });
+
+      } catch (e) {
+        showError("Błąd połączenia z Supabase:\n" + (e?.message ?? String(e)));
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
