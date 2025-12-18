@@ -239,20 +239,21 @@
         </table>
       </div>
 
-      <!-- USUNIĘTE: tekst o edycji w Supabase -->
       <div class="status" id="status"></div>
     </div>
 
   </div>
 
-  <!-- Supabase JS -->
+  <!-- Supabase JS (tylko raz) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // 1) Wklej tu swoje dane:
-    const SUPABASE_URL = "https://bzjtdwsvnhukmcjdvyen.supabase.co";
-    const SUPABASE_ANON_KEY = "WKLEJ_TUTAJ_SWÓJ_ANON_KEY";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    // Supabase config (Twoje dane)
+    const SUPABASE_URL = "https://bzjtdwsvnhukmcjdvyen.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6anRkd3N2bmh1a21jamR2eWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzc5NDgsImV4cCI6MjA4MTY1Mzk0OH0.o-W4nvYWzvEfxzIX2qJyDEhD21ncMVNBycFzinw7foo";
+
+    // Najważniejsze: nie nazywamy zmiennej "supabase", żeby nie kolidować z window.supabase
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const selectEl = document.getElementById("challengeSelect");
     const tbodyEl = document.getElementById("rankingBody");
@@ -279,7 +280,8 @@
 
     async function loadChallenges(){
       setStatus("Ładowanie challengy…");
-      const { data, error } = await supabase
+
+      const { data, error } = await supabaseClient
         .from("challenges")
         .select("id, title, period, is_active")
         .order("created_at", { ascending: false });
@@ -289,10 +291,8 @@
         return [];
       }
 
-      // sort: aktywny zawsze na górze, reszta po created_at (już jest)
-      const sorted = [...data].sort((a,b) => (b.is_active?1:0) - (a.is_active?1:0));
+      const sorted = [...(data || [])].sort((a,b) => (b.is_active?1:0) - (a.is_active?1:0));
 
-      // build options
       selectEl.innerHTML = "";
       for (const ch of sorted){
         const opt = document.createElement("option");
@@ -303,9 +303,8 @@
         selectEl.appendChild(opt);
       }
 
-      // ustaw domyślnie aktywny
       const active = sorted.find(x => x.is_active) || sorted[0];
-      if (active) selectEl.value = active.id;
+      if (active) selectEl.value = String(active.id);
 
       setStatus("");
       return sorted;
@@ -317,19 +316,18 @@
       setStatus("Ładowanie wyników…");
       tbodyEl.innerHTML = "";
 
-      const { data: scores, error } = await supabase
+      const { data: scores, error } = await supabaseClient
         .from("scores")
         .select("position, athlete, score, unit")
         .eq("challenge_id", Number(challengeId))
         .order("position", { ascending: true })
-        .limit(10);
+        .limit(50);
 
       if (error){
         setStatus("Błąd pobierania wyników: " + error.message, "err");
         return;
       }
 
-      // update header subtitle
       const selectedText = selectEl.options[selectEl.selectedIndex]?.textContent || "";
       headerSubEl.innerHTML = escapeHtml(selectedText);
 
@@ -363,13 +361,23 @@
       setStatus("");
     }
 
-    // init
-    (async function(){
+    (async function init(){
+      // Minimalny test połączenia (szybka diagnoza w konsoli)
+      try {
+        const { data, error } = await supabaseClient.from("challenges").select("id").limit(1);
+        console.log("Supabase test challenges:", { data, error });
+      } catch (e) {
+        console.log("Supabase test exception:", e);
+      }
+
       const chs = await loadChallenges();
+      if (!chs || chs.length === 0){
+        headerSubEl.textContent = "Brak challengy do wyświetlenia.";
+        return;
+      }
+
       const currentId = selectEl.value;
-      // ustaw od razu nagłówek
-      const selectedText = selectEl.options[selectEl.selectedIndex]?.textContent || "";
-      headerSubEl.innerHTML = escapeHtml(selectedText);
+      headerSubEl.innerHTML = escapeHtml(selectEl.options[selectEl.selectedIndex]?.textContent || "");
       await loadScores(currentId);
 
       selectEl.addEventListener("change", async () => {
