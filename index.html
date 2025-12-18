@@ -2,247 +2,381 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Asgard Gym — Ranking</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ASGARD GYM — Ranking</title>
+
+  <!-- Font (elegancki, premium) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    :root { color-scheme: dark; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: #0b0f14;
-      color: #e6edf3;
-      padding: 24px;
+    :root{
+      --bg0:#070a0f;
+      --bg1:#0b1220;
+      --card:#0c1528cc;
+      --stroke:#1c2a44;
+      --text:#eaf0ff;
+      --muted:#a8b6d8;
+      --gold:#d7b46a;
+      --gold2:#ffd98a;
+      --row:#0b1427;
+      --row2:#0a1222;
+      --shadow: 0 30px 80px rgba(0,0,0,.55);
+      --radius: 20px;
     }
-    .wrap { max-width: 920px; margin: 0 auto; }
-    .brand { display:flex; align-items:center; gap:14px; margin-bottom: 18px; }
-    .logo {
-      width: 44px; height: 44px; border-radius: 10px;
-      background: #111826; border: 1px solid #223047;
-      display:flex; align-items:center; justify-content:center;
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 450px at 20% 10%, rgba(215,180,106,.18), transparent 55%),
+        radial-gradient(800px 380px at 80% 5%, rgba(120,160,255,.14), transparent 60%),
+        radial-gradient(900px 500px at 50% 100%, rgba(0,0,0,.55), transparent 60%),
+        linear-gradient(180deg, var(--bg0), #05070c);
+      padding: 32px 16px 56px;
+    }
+
+    .wrap{ max-width: 1060px; margin: 0 auto; }
+
+    /* Header */
+    .header{
+      display:flex; align-items:center; gap:18px;
+      margin: 4px 0 22px;
+    }
+    .logo{
+      width:64px; height:64px; border-radius:16px;
+      display:grid; place-items:center;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:-60%;
+      background: radial-gradient(circle at 30% 30%, rgba(215,180,106,.45), transparent 45%),
+                  radial-gradient(circle at 70% 70%, rgba(215,180,106,.22), transparent 50%);
+      transform: rotate(18deg);
+    }
+    .logo span{
+      position:relative;
+      font-weight:800; letter-spacing:.04em;
+      color: var(--gold2);
+      text-shadow: 0 2px 18px rgba(215,180,106,.25);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size: 44px;
+      line-height: 1.02;
+      letter-spacing: .04em;
       font-weight: 800;
     }
-    h1 { margin: 0; font-size: 28px; letter-spacing: 0.4px; }
-    .sub { margin-top: 6px; color:#a9b7c6; }
+    .brand .sub{
+      margin-top:6px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .brand .sub b{
+      color: var(--gold2);
+      font-weight: 700;
+    }
 
-    .card {
-      margin-top: 18px;
-      background: #0f1623;
-      border: 1px solid #223047;
+    /* Card */
+    .card{
+      background: linear-gradient(180deg, rgba(12,21,40,.92), rgba(9,16,32,.88));
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(90deg, rgba(215,180,106,.09), transparent 60%);
+    }
+    .cardTop .title{
+      font-size: 18px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    select{
+      min-width: 360px;
+      max-width: 100%;
+      padding: 12px 14px;
       border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      outline:none;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+    }
+    select:focus{
+      border-color: rgba(215,180,106,.45);
+      box-shadow: 0 0 0 4px rgba(215,180,106,.10);
     }
 
-    .row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
-    select {
-      background: #0b0f14;
-      color: #e6edf3;
-      border: 1px solid #223047;
-      border-radius: 10px;
-      padding: 10px 12px;
-      min-width: 320px;
+    /* Table */
+    .tableWrap{ padding: 6px 8px 16px; }
+    table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow:hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    thead th{
+      text-align:left;
+      font-size: 16px;
+      color: var(--muted);
+      padding: 16px 16px;
+      background: rgba(0,0,0,.18);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-weight: 700;
+    }
+    tbody td{
+      padding: 16px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.12);
+      font-size: 18px;
+    }
+    tbody tr:nth-child(odd) td{ background: rgba(0,0,0,.18); }
+    tbody tr:hover td{
+      background: rgba(215,180,106,.07);
+      transition: background .15s ease;
     }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    th, td { padding: 12px 10px; border-bottom: 1px solid #223047; }
-    th { text-align:left; color:#a9b7c6; font-weight:600; }
-    td.rank { width: 80px; font-weight:800; }
-    tr.top1 td.rank { color: #ffd700; }
-    tr.top2 td.rank { color: #c0c0c0; }
-    tr.top3 td.rank { color: #cd7f32; }
+    .colPlace{ width: 140px; }
+    .place{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800;
+      letter-spacing: .02em;
+    }
+    .place .num{
+      min-width: 22px;
+      color: var(--gold2);
+      text-shadow: 0 2px 18px rgba(215,180,106,.18);
+    }
+    .medal{
+      font-size: 20px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,.35));
+    }
+    .athlete{
+      font-weight: 700;
+      font-size: 20px;
+    }
+    .result{
+      display:flex; align-items:baseline; gap:10px;
+      justify-content:flex-start;
+      font-weight: 800;
+      color: var(--gold2);
+    }
+    .result .unit{
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
 
-    .muted { color:#a9b7c6; }
-    .error { color:#ff7b7b; white-space: pre-wrap; }
-    .loading { color:#a9b7c6; }
-    .note { margin-top: 10px; color:#a9b7c6; font-size: 13px; }
+    .status{
+      padding: 10px 22px 18px;
+      color: var(--muted);
+      font-size: 14px;
+      min-height: 22px;
+    }
+    .err{ color: #ffb4b4; }
+    .ok{ color: #bde3c5; }
+
+    /* Mobile */
+    @media (max-width: 760px){
+      .header{ align-items:flex-start; }
+      .brand h1{ font-size: 34px; }
+      .cardTop{ flex-direction: column; align-items:flex-start; }
+      select{ width:100%; min-width: unset; }
+      .colPlace{ width: 110px; }
+      tbody td, thead th{ padding: 14px 12px; }
+      .athlete{ font-size: 18px; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="brand">
-      <div class="logo">AG</div>
-      <div>
+
+    <div class="header">
+      <div class="logo" aria-label="Asgard Gym logo placeholder"><span>AG</span></div>
+      <div class="brand">
         <h1>ASGARD GYM</h1>
-        <div class="sub" id="headerLine">Ładowanie challengu…</div>
+        <div class="sub" id="headerSub">Ładowanie challengu…</div>
       </div>
     </div>
 
     <div class="card">
-      <div class="row">
-        <div>
-          <div class="muted">Wybierz challenge (aktualny + archiwum)</div>
-        </div>
-        <select id="challengeSelect" disabled></select>
+      <div class="cardTop">
+        <div class="title">Wybierz challenge (aktualny + archiwum)</div>
+        <select id="challengeSelect" aria-label="Wybór challengu"></select>
       </div>
 
-      <div id="status" class="loading" style="margin-top:12px;">Ładowanie danych…</div>
-
-      <table id="scoreTable" style="display:none;">
-        <thead>
-          <tr>
-            <th>Miejsce</th>
-            <th>Zawodnik</th>
-            <th>Wynik</th>
-          </tr>
-        </thead>
-        <tbody id="scoreBody"></tbody>
-      </table>
-
-      <div id="err" class="error" style="display:none;"></div>
-
-      <div class="note">
-        Edycja wyników jest robiona w panelu Supabase (publicznie strona jest tylko do podglądu).
+      <div class="tableWrap">
+        <table id="rankingTable" aria-label="Tabela wyników">
+          <thead>
+            <tr>
+              <th class="colPlace">Miejsce</th>
+              <th>Zawodnik</th>
+              <th>Wynik</th>
+            </tr>
+          </thead>
+          <tbody id="rankingBody"></tbody>
+        </table>
       </div>
+
+      <!-- USUNIĘTE: tekst o edycji w Supabase -->
+      <div class="status" id="status"></div>
     </div>
+
   </div>
 
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-    // Twoje dane (wklejone zgodnie z tym co podałeś)
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // 1) Wklej tu swoje dane:
     const SUPABASE_URL = "https://bzjtdwsvnhukmcjdvyen.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6anRkd3N2bmh1a21jamR2eWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzc5NDgsImV4cCI6MjA4MTY1Mzk0OH0.o-W4nvYWzvEfxzIX2qJyDEhD21ncMVNBycFzinw7foo";
+    const SUPABASE_ANON_KEY = "WKLEJ_TUTAJ_SWÓJ_ANON_KEY";
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const headerLine = document.getElementById("headerLine");
-    const sel = document.getElementById("challengeSelect");
+    const selectEl = document.getElementById("challengeSelect");
+    const tbodyEl = document.getElementById("rankingBody");
+    const headerSubEl = document.getElementById("headerSub");
     const statusEl = document.getElementById("status");
-    const table = document.getElementById("scoreTable");
-    const tbody = document.getElementById("scoreBody");
-    const errEl = document.getElementById("err");
 
-    function showError(msg) {
-      errEl.style.display = "block";
-      errEl.textContent = msg;
-      statusEl.style.display = "none";
-      table.style.display = "none";
+    function medalFor(position){
+      if (position === 1) return "🥇";
+      if (position === 2) return "🥈";
+      if (position === 3) return "🥉";
+      return "";
     }
 
-    function setLoading(msg) {
-      statusEl.style.display = "block";
-      statusEl.textContent = msg;
-      errEl.style.display = "none";
-      table.style.display = "none";
+    function setStatus(msg, kind=""){
+      statusEl.className = "status " + (kind || "");
+      statusEl.textContent = msg || "";
     }
 
-    function renderScores(rows) {
-      tbody.innerHTML = "";
-      for (const r of rows) {
-        const tr = document.createElement("tr");
-        if (r.position === 1) tr.classList.add("top1");
-        if (r.position === 2) tr.classList.add("top2");
-        if (r.position === 3) tr.classList.add("top3");
-
-        tr.innerHTML = `
-          <td class="rank">${r.position ?? ""}</td>
-          <td>${r.athlete ?? ""}</td>
-          <td><strong>${r.score ?? ""}</strong> <span class="muted">${r.unit ?? ""}</span></td>
-        `;
-        tbody.appendChild(tr);
-      }
-      statusEl.style.display = "none";
-      table.style.display = "table";
+    function escapeHtml(str){
+      return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[s]));
     }
 
-    async function loadChallenges() {
-      setLoading("Ładowanie listy challengy…");
-
+    async function loadChallenges(){
+      setStatus("Ładowanie challengy…");
       const { data, error } = await supabase
         .from("challenges")
-        .select("id,title,period,is_active")
-        .order("is_active", { ascending: false })
-        .order("id", { ascending: false });
+        .select("id, title, period, is_active")
+        .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data ?? [];
+      if (error){
+        setStatus("Błąd pobierania challengy: " + error.message, "err");
+        return [];
+      }
+
+      // sort: aktywny zawsze na górze, reszta po created_at (już jest)
+      const sorted = [...data].sort((a,b) => (b.is_active?1:0) - (a.is_active?1:0));
+
+      // build options
+      selectEl.innerHTML = "";
+      for (const ch of sorted){
+        const opt = document.createElement("option");
+        const label = `${ch.title} — ${ch.period}${ch.is_active ? " (AKTUALNY)" : ""}`;
+        opt.value = ch.id;
+        opt.textContent = label;
+        opt.dataset.isActive = ch.is_active ? "1" : "0";
+        selectEl.appendChild(opt);
+      }
+
+      // ustaw domyślnie aktywny
+      const active = sorted.find(x => x.is_active) || sorted[0];
+      if (active) selectEl.value = active.id;
+
+      setStatus("");
+      return sorted;
     }
 
-    async function loadScores(challengeId) {
-      setLoading("Ładowanie TOP 10…");
+    async function loadScores(challengeId){
+      if (!challengeId) return;
 
-      const { data, error } = await supabase
+      setStatus("Ładowanie wyników…");
+      tbodyEl.innerHTML = "";
+
+      const { data: scores, error } = await supabase
         .from("scores")
-        .select("athlete,score,unit,position")
-        .eq("challenge_id", challengeId)
+        .select("position, athlete, score, unit")
+        .eq("challenge_id", Number(challengeId))
         .order("position", { ascending: true })
         .limit(10);
 
-      if (error) throw error;
-
-      // awaryjnie, jeśli ktoś nie wypełni "position"
-      const rows = data ?? [];
-      const hasPositions = rows.some(x => x.position != null);
-      if (!hasPositions && rows.length > 0) {
-        rows.sort((a,b) => (Number(b.score) || 0) - (Number(a.score) || 0));
-        rows.forEach((r, i) => r.position = i + 1);
+      if (error){
+        setStatus("Błąd pobierania wyników: " + error.message, "err");
+        return;
       }
 
-      return rows;
-    }
+      // update header subtitle
+      const selectedText = selectEl.options[selectEl.selectedIndex]?.textContent || "";
+      headerSubEl.innerHTML = escapeHtml(selectedText);
 
-    function updateHeader(ch) {
-      if (!ch) return;
-      headerLine.textContent = `${ch.title} — ${ch.period}${ch.is_active ? " (AKTUALNY)" : ""}`;
-    }
-
-    function fillSelect(challenges) {
-      sel.innerHTML = "";
-      for (const ch of challenges) {
-        const opt = document.createElement("option");
-        opt.value = ch.id;
-        opt.textContent = `${ch.title} — ${ch.period}${ch.is_active ? " (AKTUALNY)" : ""}`;
-        sel.appendChild(opt);
+      if (!scores || scores.length === 0){
+        setStatus("Brak wyników dla tego challengu.", "ok");
+        return;
       }
-      sel.disabled = false;
-    }
 
-    async function init() {
-      try {
-        const challenges = await loadChallenges();
-
-        if (challenges.length === 0) {
-          showError("Brak danych w tabeli 'challenges'. Dodaj pierwszy challenge w Supabase.");
-          return;
-        }
-
-        fillSelect(challenges);
-
-        const active = challenges.find(c => c.is_active) ?? challenges[0];
-        sel.value = String(active.id);
-        updateHeader(active);
-
-        const scores = await loadScores(active.id);
-        if (scores.length === 0) {
-          statusEl.style.display = "block";
-          statusEl.textContent = "Brak wyników dla tego challengu. Dodaj TOP 10 w tabeli 'scores'.";
-          table.style.display = "none";
-        } else {
-          renderScores(scores);
-        }
-
-        sel.addEventListener("change", async () => {
-          const chosenId = Number(sel.value);
-          const chosen = challenges.find(c => c.id === chosenId);
-          updateHeader(chosen);
-
-          const rows = await loadScores(chosenId);
-          if (rows.length === 0) {
-            statusEl.style.display = "block";
-            statusEl.textContent = "Brak wyników dla tego challengu. Dodaj TOP 10 w tabeli 'scores'.";
-            table.style.display = "none";
-          } else {
-            renderScores(rows);
-          }
-        });
-
-      } catch (e) {
-        showError("Błąd połączenia z Supabase:\n" + (e?.message ?? String(e)));
+      for (const row of scores){
+        const pos = Number(row.position);
+        const medal = medalFor(pos);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="colPlace">
+            <div class="place">
+              <span class="num">${escapeHtml(pos)}</span>
+              <span class="medal">${medal}</span>
+            </div>
+          </td>
+          <td><span class="athlete">${escapeHtml(row.athlete)}</span></td>
+          <td>
+            <div class="result">
+              <span>${escapeHtml(row.score)}</span>
+              <span class="unit">${escapeHtml(row.unit || "")}</span>
+            </div>
+          </td>
+        `;
+        tbodyEl.appendChild(tr);
       }
+
+      setStatus("");
     }
 
-    init();
+    // init
+    (async function(){
+      const chs = await loadChallenges();
+      const currentId = selectEl.value;
+      // ustaw od razu nagłówek
+      const selectedText = selectEl.options[selectEl.selectedIndex]?.textContent || "";
+      headerSubEl.innerHTML = escapeHtml(selectedText);
+      await loadScores(currentId);
+
+      selectEl.addEventListener("change", async () => {
+        headerSubEl.innerHTML = escapeHtml(selectEl.options[selectEl.selectedIndex]?.textContent || "");
+        await loadScores(selectEl.value);
+      });
+    })();
   </script>
 </body>
 </html>
