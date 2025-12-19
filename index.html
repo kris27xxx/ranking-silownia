@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ASGARD GYM — Ranking</title>
 
-  <!-- Font (elegancki, premium) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -20,8 +19,8 @@
       --muted:#a8b6d8;
       --gold:#d7b46a;
       --gold2:#ffd98a;
-      --row:#0b1427;
-      --row2:#0a1222;
+      --red:#ff6b6b;
+      --green:#51cf66;
       --shadow: 0 30px 80px rgba(0,0,0,.55);
       --radius: 20px;
     }
@@ -57,11 +56,11 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Header */
     .header{
       display:flex; align-items:center; gap:18px;
       margin: 4px 0 22px;
       animation: slideDown 0.8s ease;
+      position: relative;
     }
 
     @keyframes slideDown {
@@ -101,7 +100,6 @@
       50% { opacity: 1; }
     }
 
-    /* Logo Image (jeśli będziesz miał plik) */
     .logo img {
       width: 100%;
       height: 100%;
@@ -111,35 +109,118 @@
       border-radius: 12px;
     }
 
-    /* Fallback text (jak teraz) */
-    .logo span{
-      position:relative;
-      font-weight:800; 
-      letter-spacing:.04em;
-      color: var(--gold2);
-      text-shadow: 0 2px 18px rgba(215,180,106,.25);
-      font-size: 32px;
-      z-index: 2;
-    }
-
     .brand h1{
       margin:0;
       font-size: 44px;
       line-height: 1.02;
       letter-spacing: .04em;
       font-weight: 800;
+      flex: 1;
     }
     .brand .sub{
       margin-top:6px;
       color: var(--muted);
       font-size: 16px;
     }
-    .brand .sub b{
+
+    .adminBtn {
+      padding: 10px 20px;
+      background: rgba(215,180,106,.15);
+      border: 1px solid rgba(215,180,106,.3);
+      border-radius: 12px;
       color: var(--gold2);
-      font-weight: 700;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .adminBtn:hover {
+      background: rgba(215,180,106,.25);
+      transform: translateY(-2px);
     }
 
-    /* Card */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal.show { display: flex; }
+
+    .modalContent {
+      background: linear-gradient(180deg, rgba(12,21,40,.98), rgba(9,16,32,.95));
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.7);
+    }
+
+    .modalContent h2 {
+      margin: 0 0 24px;
+      color: var(--gold2);
+      font-size: 28px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(0,0,0,.3);
+      color: var(--text);
+      font-size: 16px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(215,180,106,.5);
+      box-shadow: 0 0 0 4px rgba(215,180,106,.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btnPrimary {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #000;
+    }
+    .btnPrimary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(215,180,106,.4);
+    }
+
+    .btnSecondary {
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      margin-top: 8px;
+    }
+    .btnSecondary:hover {
+      background: rgba(255,255,255,.1);
+    }
+
+    .btnDanger {
+      background: var(--red);
+      color: #fff;
+      padding: 8px 12px;
+      width: auto;
+      font-size: 14px;
+    }
+
     .card{
       background: linear-gradient(180deg, rgba(12,21,40,.92), rgba(9,16,32,.88));
       border: 1px solid rgba(255,255,255,.07);
@@ -147,6 +228,7 @@
       box-shadow: var(--shadow);
       overflow:hidden;
       animation: cardSlideUp 0.9s ease;
+      margin-bottom: 20px;
     }
 
     @keyframes cardSlideUp {
@@ -180,6 +262,7 @@
       font-weight: 600;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
       transition: all 0.3s ease;
+      margin: 0;
     }
     select:focus{
       border-color: rgba(215,180,106,.45);
@@ -187,7 +270,6 @@
       transform: scale(1.02);
     }
 
-    /* Table */
     .tableWrap{ padding: 6px 8px 16px; }
     table{
       width:100%;
@@ -216,7 +298,6 @@
       to { opacity: 1; }
     }
 
-    /* Opóźnienie animacji dla kolejnych wierszy */
     tbody tr:nth-child(1) { animation-delay: 0.1s; }
     tbody tr:nth-child(2) { animation-delay: 0.15s; }
     tbody tr:nth-child(3) { animation-delay: 0.2s; }
@@ -238,11 +319,11 @@
     tbody tr:nth-child(odd) td{ background: rgba(0,0,0,.18); }
     tbody tr:hover td{
       background: rgba(215,180,106,.07);
-      transform: translateX(4px);
     }
 
     .colPlace{ width: 140px; }
-    .colWeight{ width: 100px; } /* NOWA kolumna */
+    .colWeight{ width: 100px; }
+    .colActions{ width: 120px; }
     
     .place{
       display:flex; align-items:center; gap:10px;
@@ -281,11 +362,41 @@
       letter-spacing: .02em;
     }
 
-    /* Waga zawodnika */
     .weight {
       color: var(--muted);
       font-size: 16px;
       font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btnEdit, .btnDelete {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btnEdit {
+      background: rgba(81,207,102,.2);
+      color: var(--green);
+    }
+    .btnEdit:hover {
+      background: rgba(81,207,102,.3);
+    }
+
+    .btnDelete {
+      background: rgba(255,107,107,.2);
+      color: var(--red);
+    }
+    .btnDelete:hover {
+      background: rgba(255,107,107,.3);
     }
 
     .status{
@@ -297,9 +408,26 @@
     .err{ color: #ffb4b4; }
     .ok{ color: #bde3c5; }
 
-    /* Mobile */
+    .adminPanel {
+      display: none;
+    }
+    .adminPanel.show {
+      display: block;
+    }
+
+    .formGroup {
+      margin-bottom: 16px;
+    }
+    .formGroup label {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
     @media (max-width: 760px){
-      .header{ align-items:flex-start; }
+      .header{ align-items:flex-start; flex-wrap: wrap; }
       .brand h1{ font-size: 34px; }
       .cardTop{ flex-direction: column; align-items:flex-start; }
       select{ width:100%; min-width: unset; }
@@ -308,6 +436,7 @@
       tbody td, thead th{ padding: 14px 12px; }
       .athlete{ font-size: 18px; }
       .logo{ width: 64px; height: 64px; }
+      .actions { flex-direction: column; }
     }
   </style>
 </head>
@@ -322,47 +451,150 @@
         <h1>ASGARD GYM</h1>
         <div class="sub" id="headerSub">Ładowanie challengu…</div>
       </div>
+      <button class="adminBtn" id="adminToggle">Panel Admina</button>
     </div>
 
-    <div class="card">
-      <div class="cardTop">
-        <div class="title">Wybierz challenge (aktualny + archiwum)</div>
-        <select id="challengeSelect" aria-label="Wybór challengu"></select>
+    <div class="adminPanel" id="adminPanel">
+      <div class="card">
+        <div class="cardTop">
+          <div class="title">Zarządzanie Rankingiem</div>
+          <button class="adminBtn" id="logoutBtn" style="padding: 8px 16px; font-size: 14px;">Wyloguj</button>
+        </div>
+        <div style="padding: 20px;">
+          <h3 style="color: var(--gold2); margin-top: 0;">Dodaj zawodnika</h3>
+          <form id="addScoreForm">
+            <div class="formGroup">
+              <label>Challenge</label>
+              <select id="adminChallengeSelect" required></select>
+            </div>
+            <div class="formGroup">
+              <label>Pozycja (np. 1, 2, 3...)</label>
+              <input type="number" id="adminPosition" min="1" required>
+            </div>
+            <div class="formGroup">
+              <label>Imię zawodnika</label>
+              <input type="text" id="adminAthlete" required>
+            </div>
+            <div class="formGroup">
+              <label>Waga (kg)</label>
+              <input type="number" step="0.1" id="adminWeight">
+            </div>
+            <div class="formGroup">
+              <label>Wynik</label>
+              <input type="number" step="0.1" id="adminScore" required>
+            </div>
+            <div class="formGroup">
+              <label>Jednostka</label>
+              <select id="adminUnit" required>
+                <option value="kg">kg</option>
+                <option value="reps">reps</option>
+                <option value="sec">sec</option>
+                <option value="pkt">pkt</option>
+              </select>
+            </div>
+            <button type="submit" class="btnPrimary">Dodaj do rankingu</button>
+          </form>
+        </div>
       </div>
+    </div>
 
-      <div class="tableWrap">
-        <table id="rankingTable" aria-label="Tabela wyników">
-          <thead>
-            <tr>
-              <th class="colPlace">Miejsce</th>
-              <th>Zawodnik</th>
-              <th class="colWeight">Waga</th> <!-- NOWA kolumna -->
-              <th>Wynik</th>
-            </tr>
-          </thead>
-          <tbody id="rankingBody"></tbody>
-        </table>
+    <div id="publicView">
+      <div class="card">
+        <div class="cardTop">
+          <div class="title">Wybierz challenge (aktualny + archiwum)</div>
+          <select id="challengeSelect" aria-label="Wybór challengu"></select>
+        </div>
+
+        <div class="tableWrap">
+          <table id="rankingTable" aria-label="Tabela wyników">
+            <thead>
+              <tr>
+                <th class="colPlace">Miejsce</th>
+                <th>Zawodnik</th>
+                <th class="colWeight">Waga</th>
+                <th>Wynik</th>
+                <th class="colActions" id="actionsHeader" style="display:none;">Akcje</th>
+              </tr>
+            </thead>
+            <tbody id="rankingBody"></tbody>
+          </table>
+        </div>
+
+        <div class="status" id="status"></div>
       </div>
-
-      <div class="status" id="status"></div>
     </div>
 
   </div>
 
-  <!-- Supabase JS (tylko raz) -->
+  <div class="modal" id="loginModal">
+    <div class="modalContent">
+      <h2>🔒 Panel Admina</h2>
+      <form id="loginForm">
+        <input type="password" id="passwordInput" placeholder="Wpisz hasło..." required>
+        <button type="submit" class="btnPrimary">Zaloguj</button>
+        <button type="button" class="btnSecondary" id="cancelLogin">Anuluj</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="editModal">
+    <div class="modalContent">
+      <h2>Edytuj zawodnika</h2>
+      <form id="editScoreForm">
+        <input type="hidden" id="editScoreId">
+        <div class="formGroup">
+          <label>Pozycja</label>
+          <input type="number" id="editPosition" min="1" required>
+        </div>
+        <div class="formGroup">
+          <label>Imię zawodnika</label>
+          <input type="text" id="editAthlete" required>
+        </div>
+        <div class="formGroup">
+          <label>Waga (kg)</label>
+          <input type="number" step="0.1" id="editWeight">
+        </div>
+        <div class="formGroup">
+          <label>Wynik</label>
+          <input type="number" step="0.1" id="editScore" required>
+        </div>
+        <div class="formGroup">
+          <label>Jednostka</label>
+          <select id="editUnit" required>
+            <option value="kg">kg</option>
+            <option value="reps">reps</option>
+            <option value="sec">sec</option>
+            <option value="pkt">pkt</option>
+          </select>
+        </div>
+        <button type="submit" class="btnPrimary">Zapisz zmiany</button>
+        <button type="button" class="btnSecondary" id="cancelEdit">Anuluj</button>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // Supabase config
     const SUPABASE_URL = "https://bzjtdwsvnhukmcjdvyen.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6anRkd3N2bmh1a21jamR2eWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzc5NDgsImV4cCI6MjA4MTY1Mzk0OH0.o-W4nvYWzvEfxzIX2qJyDEhD21ncMVNBycFzinw7foo";
+    const ADMIN_PASSWORD = "asgard2025";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let isAdmin = sessionStorage.getItem('asgardAdmin') === 'true';
+    let currentChallengeId = null;
+
     const selectEl = document.getElementById("challengeSelect");
+    const adminSelectEl = document.getElementById("adminChallengeSelect");
     const tbodyEl = document.getElementById("rankingBody");
     const headerSubEl = document.getElementById("headerSub");
     const statusEl = document.getElementById("status");
+    const adminPanel = document.getElementById("adminPanel");
+    const publicView = document.getElementById("publicView");
+    const loginModal = document.getElementById("loginModal");
+    const editModal = document.getElementById("editModal");
+    const actionsHeader = document.getElementById("actionsHeader");
 
     function medalFor(position){
       if (position === 1) return "🥇";
@@ -382,6 +614,16 @@
       }[s]));
     }
 
+    function updateAdminUI() {
+      if (isAdmin) {
+        adminPanel.classList.add('show');
+        actionsHeader.style.display = '';
+      } else {
+        adminPanel.classList.remove('show');
+        actionsHeader.style.display = 'none';
+      }
+    }
+
     async function loadChallenges(){
       setStatus("Ładowanie challengy…");
 
@@ -398,17 +640,28 @@
       const sorted = [...(data || [])].sort((a,b) => (b.is_active?1:0) - (a.is_active?1:0));
 
       selectEl.innerHTML = "";
+      adminSelectEl.innerHTML = "";
+      
       for (const ch of sorted){
-        const opt = document.createElement("option");
         const label = `${ch.title} — ${ch.period}${ch.is_active ? " (AKTUALNY)" : ""}`;
-        opt.value = ch.id;
-        opt.textContent = label;
-        opt.dataset.isActive = ch.is_active ? "1" : "0";
-        selectEl.appendChild(opt);
+        
+        const opt1 = document.createElement("option");
+        opt1.value = ch.id;
+        opt1.textContent = label;
+        selectEl.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = ch.id;
+        opt2.textContent = label;
+        adminSelectEl.appendChild(opt2);
       }
 
       const active = sorted.find(x => x.is_active) || sorted[0];
-      if (active) selectEl.value = String(active.id);
+      if (active) {
+        selectEl.value = String(active.id);
+        adminSelectEl.value = String(active.id);
+        currentChallengeId = active.id;
+      }
 
       setStatus("");
       return sorted;
@@ -416,14 +669,14 @@
 
     async function loadScores(challengeId){
       if (!challengeId) return;
+      currentChallengeId = challengeId;
 
       setStatus("Ładowanie wyników…");
       tbodyEl.innerHTML = "";
 
-      // UWAGA: dodane pole "weight"
       const { data: scores, error } = await supabaseClient
         .from("scores")
-        .select("position, athlete, score, unit, weight")
+        .select("id, position, athlete, score, unit, weight")
         .eq("challenge_id", Number(challengeId))
         .order("position", { ascending: true })
         .limit(50);
@@ -447,6 +700,20 @@
         const weightText = row.weight ? `${row.weight} kg` : "—";
         
         const tr = document.createElement("tr");
+        tr.dataset.scoreId = row.id;
+        
+        let actionsHtml = '';
+        if (isAdmin) {
+          actionsHtml = `
+            <td class="colActions">
+              <div class="actions">
+                <button class="btnEdit" onclick="editScore(${row.id})">Edytuj</button>
+                <button class="btnDelete" onclick="deleteScore(${row.id})">Usuń</button>
+              </div>
+            </td>
+          `;
+        }
+
         tr.innerHTML = `
           <td class="colPlace">
             <div class="place">
@@ -462,6 +729,7 @@
               <span class="unit">${escapeHtml(row.unit || "")}</span>
             </div>
           </td>
+          ${actionsHtml}
         `;
         tbodyEl.appendChild(tr);
       }
@@ -469,14 +737,183 @@
       setStatus("");
     }
 
-    (async function init(){
-      // Minimalny test połączenia
-      try {
-        const { data, error } = await supabaseClient.from("challenges").select("id").limit(1);
-        console.log("Supabase test challenges:", { data, error });
-      } catch (e) {
-        console.log("Supabase test exception:", e);
+    async function adjustPositions(challengeId, newPosition, excludeId = null) {
+      const { data: scores, error } = await supabaseClient
+        .from("scores")
+        .select("id, position")
+        .eq("challenge_id", Number(challengeId))
+        .order("position", { ascending: true });
+
+      if (error) return;
+
+      const toUpdate = [];
+      let currentPos = 1;
+
+      for (const score of scores) {
+        if (excludeId && score.id === excludeId) continue;
+        
+        if (currentPos === newPosition) {
+          currentPos++;
+        }
+        
+        if (score.position !== currentPos) {
+          toUpdate.push({ id: score.id, position: currentPos });
+        }
+        currentPos++;
       }
+
+      for (const update of toUpdate) {
+        await supabaseClient
+          .from("scores")
+          .update({ position: update.position })
+          .eq("id", update.id);
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const password = document.getElementById('passwordInput').value;
+      
+      if (password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        sessionStorage.setItem('asgardAdmin', 'true');
+        loginModal.classList.remove('show');
+        updateAdminUI();
+        loadScores(currentChallengeId);
+        document.getElementById('passwordInput').value = '';
+      } else {
+        alert('Nieprawidłowe hasło!');
+      }
+    });
+
+    document.getElementById('adminToggle').addEventListener('click', () => {
+      if (isAdmin) {
+        adminPanel.classList.toggle('show');
+      } else {
+        loginModal.classList.add('show');
+      }
+    });
+
+    document.getElementById('cancelLogin').addEventListener('click', () => {
+      loginModal.classList.remove('show');
+      document.getElementById('passwordInput').value = '';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      isAdmin = false;
+      sessionStorage.removeItem('asgardAdmin');
+      updateAdminUI();
+      loadScores(currentChallengeId);
+    });
+
+    document.getElementById('addScoreForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const challengeId = Number(adminSelectEl.value);
+      const position = Number(document.getElementById('adminPosition').value);
+      const athlete = document.getElementById('adminAthlete').value;
+      const weight = document.getElementById('adminWeight').value || null;
+      const score = Number(document.getElementById('adminScore').value);
+      const unit = document.getElementById('adminUnit').value;
+
+      await adjustPositions(challengeId, position);
+
+      const { error } = await supabaseClient
+        .from("scores")
+        .insert({
+          challenge_id: challengeId,
+          position,
+          athlete,
+          weight: weight ? Number(weight) : null,
+          score,
+          unit
+        });
+
+      if (error) {
+        alert('Błąd dodawania: ' + error.message);
+      } else {
+        alert('Zawodnik dodany!');
+        document.getElementById('addScoreForm').reset();
+        loadScores(currentChallengeId);
+      }
+    });
+
+    window.editScore = async (id) => {
+      const { data, error } = await supabaseClient
+        .from("scores")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        alert('Błąd ładowania danych');
+        return;
+      }
+
+      document.getElementById('editScoreId').value = data.id;
+      document.getElementById('editPosition').value = data.position;
+      document.getElementById('editAthlete').value = data.athlete;
+      document.getElementById('editWeight').value = data.weight || '';
+      document.getElementById('editScore').value = data.score;
+      document.getElementById('editUnit').value = data.unit;
+
+      editModal.classList.add('show');
+    };
+
+    document.getElementById('editScoreForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = Number(document.getElementById('editScoreId').value);
+      const newPosition = Number(document.getElementById('editPosition').value);
+      const athlete = document.getElementById('editAthlete').value;
+      const weight = document.getElementById('editWeight').value || null;
+      const score = Number(document.getElementById('editScore').value);
+      const unit = document.getElementById('editUnit').value;
+
+      await adjustPositions(currentChallengeId, newPosition, id);
+
+      const { error } = await supabaseClient
+        .from("scores")
+        .update({
+          position: newPosition,
+          athlete,
+          weight: weight ? Number(weight) : null,
+          score,
+          unit
+        })
+        .eq("id", id);
+
+      if (error) {
+        alert('Błąd zapisywania: ' + error.message);
+      } else {
+        alert('Zapisano zmiany!');
+        editModal.classList.remove('show');
+        loadScores(currentChallengeId);
+      }
+    });
+
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+      editModal.classList.remove('show');
+    });
+
+    window.deleteScore = async (id) => {
+      if (!confirm('Na pewno usunąć tego zawodnika?')) return;
+
+      const { error } = await supabaseClient
+        .from("scores")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert('Błąd usuwania: ' + error.message);
+      } else {
+        alert('Usunięto!');
+        loadScores(currentChallengeId);
+      }
+    };
+
+    (async function init(){
+      updateAdminUI();
 
       const chs = await loadChallenges();
       if (!chs || chs.length === 0){
