@@ -676,28 +676,36 @@
     }
 
     .exitTvBtn {
-      display: none;
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 12px 24px;
-      background: rgba(255,107,107,.3);
-      border: 1px solid rgba(255,107,107,.5);
-      border-radius: 12px;
-      color: var(--red);
-      font-weight: 600;
-      cursor: pointer;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  background: rgba(0,0,0,.7);
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .exitTvBtn:hover {
-      background: rgba(255,107,107,.5);
-    }
+.exitTvBtn:hover {
+  background: rgba(255,107,107,.8);
+  border-color: rgba(255,255,255,.4);
+  transform: scale(1.1);
+}
 
-    body.tvMode .exitTvBtn {
-      display: block;
-    }
+body.tvMode .exitTvBtn {
+  display: flex;
+}
 
     @media (max-width: 760px){
       .header{ align-items:flex-start; flex-wrap: wrap; }
