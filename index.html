@@ -139,6 +139,21 @@
       transform: translateY(-2px);
     }
 
+    .tvBtn {
+      padding: 10px 20px;
+      background: rgba(77,171,247,.15);
+      border: 1px solid rgba(77,171,247,.3);
+      border-radius: 12px;
+      color: #4dabf7;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .tvBtn:hover {
+      background: rgba(77,171,247,.25);
+      transform: translateY(-2px);
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -568,6 +583,122 @@
       font-size: 14px;
     }
 
+    /* TRYB TV */
+    body.tvMode {
+      padding: 20px;
+    }
+
+    body.tvMode .wrap {
+      max-width: 100%;
+    }
+
+    body.tvMode .header {
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    body.tvMode .logo {
+      width: 140px;
+      height: 140px;
+    }
+
+    body.tvMode .brand h1 {
+      font-size: 72px;
+      text-align: center;
+    }
+
+    body.tvMode .brand .sub {
+      font-size: 28px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    body.tvMode .adminBtn,
+    body.tvMode .tvBtn,
+    body.tvMode .adminPanel,
+    body.tvMode .cardTop {
+      display: none !important;
+    }
+
+    body.tvMode .card {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+
+    body.tvMode thead th {
+      font-size: 24px;
+      padding: 24px;
+    }
+
+    body.tvMode tbody td {
+      font-size: 26px;
+      padding: 24px;
+    }
+
+    body.tvMode tbody tr:nth-child(1) td {
+      font-size: 32px;
+    }
+
+    body.tvMode tbody tr:nth-child(1) .place .num {
+      font-size: 42px;
+    }
+
+    body.tvMode tbody tr:nth-child(1) .athlete {
+      font-size: 36px;
+    }
+
+    body.tvMode tbody tr:nth-child(1) .result span:first-child {
+      font-size: 38px;
+    }
+
+    body.tvMode tbody tr:nth-child(2) td,
+    body.tvMode tbody tr:nth-child(3) td {
+      font-size: 28px;
+    }
+
+    body.tvMode tbody tr:nth-child(2) .place .num,
+    body.tvMode tbody tr:nth-child(3) .place .num {
+      font-size: 34px;
+    }
+
+    body.tvMode tbody tr:nth-child(2) .athlete,
+    body.tvMode tbody tr:nth-child(3) .athlete {
+      font-size: 30px;
+    }
+
+    body.tvMode .medal {
+      font-size: 32px;
+    }
+
+    body.tvMode .weight {
+      font-size: 22px;
+    }
+
+    .exitTvBtn {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      background: rgba(255,107,107,.3);
+      border: 1px solid rgba(255,107,107,.5);
+      border-radius: 12px;
+      color: var(--red);
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .exitTvBtn:hover {
+      background: rgba(255,107,107,.5);
+    }
+
+    body.tvMode .exitTvBtn {
+      display: block;
+    }
+
     @media (max-width: 760px){
       .header{ align-items:flex-start; flex-wrap: wrap; }
       .brand h1{ font-size: 34px; }
@@ -580,10 +711,47 @@
       .logo{ width: 85px; height: 85px; }
       .actions { flex-direction: column; }
       .challengeItem { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+      body.tvMode .logo {
+        width: 100px;
+        height: 100px;
+      }
+
+      body.tvMode .brand h1 {
+        font-size: 42px;
+      }
+
+      body.tvMode .brand .sub {
+        font-size: 18px;
+      }
+
+      body.tvMode thead th {
+        font-size: 16px;
+        padding: 14px;
+      }
+
+      body.tvMode tbody td {
+        font-size: 18px;
+        padding: 14px;
+      }
+
+      body.tvMode tbody tr:nth-child(1) td {
+        font-size: 22px;
+      }
+
+      body.tvMode tbody tr:nth-child(1) .place .num {
+        font-size: 30px;
+      }
+
+      body.tvMode tbody tr:nth-child(1) .athlete {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 <body>
+  <button class="exitTvBtn" id="exitTvBtn">✕ Wyjdź z trybu TV</button>
+
   <div class="wrap">
 
     <div class="header">
@@ -594,6 +762,7 @@
         <h1>ASGARD GYM</h1>
         <div class="sub" id="headerSub">Ładowanie challengu…</div>
       </div>
+      <button class="tvBtn" id="tvToggle">📺 Tryb TV</button>
       <button class="adminBtn" id="adminToggle">Panel Admina</button>
     </div>
 
@@ -827,6 +996,15 @@
       }
     }
 
+    // TV Mode
+    document.getElementById('tvToggle').addEventListener('click', () => {
+      document.body.classList.add('tvMode');
+    });
+
+    document.getElementById('exitTvBtn').addEventListener('click', () => {
+      document.body.classList.remove('tvMode');
+    });
+
     async function loadChallenges(){
       setStatus("Ładowanie challengy…");
 
@@ -1051,7 +1229,6 @@
       const period = document.getElementById('challengePeriod').value;
       const isActive = document.getElementById('challengeActive').checked;
 
-      // Jeśli ustawiamy jako aktywny, dezaktywuj inne
       if (isActive) {
         await supabaseClient
           .from("challenges")
@@ -1133,13 +1310,11 @@
     window.deleteChallenge = async (id) => {
       if (!confirm('⚠️ Usunięcie challengu skasuje też wszystkie wyniki!\n\nNa pewno kontynuować?')) return;
 
-      // Usuń wyniki
       await supabaseClient
         .from("scores")
         .delete()
         .eq("challenge_id", id);
 
-      // Usuń challenge
       const { error } = await supabaseClient
         .from("challenges")
         .delete()
