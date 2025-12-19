@@ -38,36 +38,88 @@
         radial-gradient(900px 500px at 50% 100%, rgba(0,0,0,.55), transparent 60%),
         linear-gradient(180deg, var(--bg0), #05070c);
       padding: 32px 16px 56px;
+      animation: bgPulse 20s ease infinite;
     }
 
-    .wrap{ max-width: 1060px; margin: 0 auto; }
+    @keyframes bgPulse {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .wrap{ 
+      max-width: 1060px; 
+      margin: 0 auto; 
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     /* Header */
     .header{
       display:flex; align-items:center; gap:18px;
       margin: 4px 0 22px;
+      animation: slideDown 0.8s ease;
     }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .logo{
-      width:64px; height:64px; border-radius:16px;
-      display:grid; place-items:center;
+      width:80px; 
+      height:80px; 
+      border-radius:16px;
+      display:grid; 
+      place-items:center;
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       border: 1px solid rgba(255,255,255,.08);
       box-shadow: 0 12px 30px rgba(0,0,0,.35);
       position:relative;
       overflow:hidden;
+      transition: transform 0.3s ease;
     }
+
+    .logo:hover {
+      transform: scale(1.05) rotate(2deg);
+    }
+
     .logo::after{
       content:"";
       position:absolute; inset:-60%;
       background: radial-gradient(circle at 30% 30%, rgba(215,180,106,.45), transparent 45%),
                   radial-gradient(circle at 70% 70%, rgba(215,180,106,.22), transparent 50%);
       transform: rotate(18deg);
+      animation: logoShine 4s ease infinite;
     }
+
+    @keyframes logoShine {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Logo Image (jeśli będziesz miał plik) */
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      position: relative;
+      z-index: 2;
+      border-radius: 12px;
+    }
+
+    /* Fallback text (jak teraz) */
     .logo span{
       position:relative;
-      font-weight:800; letter-spacing:.04em;
+      font-weight:800; 
+      letter-spacing:.04em;
       color: var(--gold2);
       text-shadow: 0 2px 18px rgba(215,180,106,.25);
+      font-size: 32px;
+      z-index: 2;
     }
 
     .brand h1{
@@ -94,7 +146,14 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
+      animation: cardSlideUp 0.9s ease;
     }
+
+    @keyframes cardSlideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .cardTop{
       display:flex;
       align-items:center;
@@ -120,10 +179,12 @@
       outline:none;
       font-weight: 600;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+      transition: all 0.3s ease;
     }
     select:focus{
       border-color: rgba(215,180,106,.45);
       box-shadow: 0 0 0 4px rgba(215,180,106,.10);
+      transform: scale(1.02);
     }
 
     /* Table */
@@ -145,19 +206,44 @@
       border-bottom: 1px solid rgba(255,255,255,.06);
       font-weight: 700;
     }
+    
+    tbody tr {
+      animation: rowFadeIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes rowFadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Opóźnienie animacji dla kolejnych wierszy */
+    tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    tbody tr:nth-child(2) { animation-delay: 0.15s; }
+    tbody tr:nth-child(3) { animation-delay: 0.2s; }
+    tbody tr:nth-child(4) { animation-delay: 0.25s; }
+    tbody tr:nth-child(5) { animation-delay: 0.3s; }
+    tbody tr:nth-child(6) { animation-delay: 0.35s; }
+    tbody tr:nth-child(7) { animation-delay: 0.4s; }
+    tbody tr:nth-child(8) { animation-delay: 0.45s; }
+    tbody tr:nth-child(9) { animation-delay: 0.5s; }
+    tbody tr:nth-child(10) { animation-delay: 0.55s; }
+
     tbody td{
       padding: 16px 16px;
       border-bottom: 1px solid rgba(255,255,255,.06);
       background: rgba(0,0,0,.12);
       font-size: 18px;
+      transition: all 0.3s ease;
     }
     tbody tr:nth-child(odd) td{ background: rgba(0,0,0,.18); }
     tbody tr:hover td{
       background: rgba(215,180,106,.07);
-      transition: background .15s ease;
+      transform: translateX(4px);
     }
 
     .colPlace{ width: 140px; }
+    .colWeight{ width: 100px; } /* NOWA kolumna */
+    
     .place{
       display:flex; align-items:center; gap:10px;
       font-weight:800;
@@ -171,7 +257,14 @@
     .medal{
       font-size: 20px;
       filter: drop-shadow(0 6px 12px rgba(0,0,0,.35));
+      animation: medalBounce 2s ease infinite;
     }
+
+    @keyframes medalBounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+
     .athlete{
       font-weight: 700;
       font-size: 20px;
@@ -186,6 +279,13 @@
       color: var(--muted);
       font-weight: 700;
       letter-spacing: .02em;
+    }
+
+    /* Waga zawodnika */
+    .weight {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 600;
     }
 
     .status{
@@ -204,8 +304,10 @@
       .cardTop{ flex-direction: column; align-items:flex-start; }
       select{ width:100%; min-width: unset; }
       .colPlace{ width: 110px; }
+      .colWeight{ width: 80px; }
       tbody td, thead th{ padding: 14px 12px; }
       .athlete{ font-size: 18px; }
+      .logo{ width: 64px; height: 64px; }
     }
   </style>
 </head>
@@ -213,7 +315,15 @@
   <div class="wrap">
 
     <div class="header">
-      <div class="logo" aria-label="Asgard Gym logo placeholder"><span>AG</span></div>
+      <div class="logo" aria-label="Asgard Gym logo">
+        <!-- 
+          OPCJA A: Jeśli masz plik logo (np. logo.png):
+          <img src="logo.png" alt="Asgard Gym">
+          
+          OPCJA B: Placeholder tekst (obecny):
+        -->
+        <span>AG</span>
+      </div>
       <div class="brand">
         <h1>ASGARD GYM</h1>
         <div class="sub" id="headerSub">Ładowanie challengu…</div>
@@ -232,6 +342,7 @@
             <tr>
               <th class="colPlace">Miejsce</th>
               <th>Zawodnik</th>
+              <th class="colWeight">Waga</th> <!-- NOWA kolumna -->
               <th>Wynik</th>
             </tr>
           </thead>
@@ -248,11 +359,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // Supabase config (Twoje dane)
+    // Supabase config
     const SUPABASE_URL = "https://bzjtdwsvnhukmcjdvyen.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6anRkd3N2bmh1a21jamR2eWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzc5NDgsImV4cCI6MjA4MTY1Mzk0OH0.o-W4nvYWzvEfxzIX2qJyDEhD21ncMVNBycFzinw7foo";
 
-    // Najważniejsze: nie nazywamy zmiennej "supabase", żeby nie kolidować z window.supabase
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const selectEl = document.getElementById("challengeSelect");
@@ -316,9 +426,10 @@
       setStatus("Ładowanie wyników…");
       tbodyEl.innerHTML = "";
 
+      // UWAGA: dodane pole "weight"
       const { data: scores, error } = await supabaseClient
         .from("scores")
-        .select("position, athlete, score, unit")
+        .select("position, athlete, score, unit, weight")
         .eq("challenge_id", Number(challengeId))
         .order("position", { ascending: true })
         .limit(50);
@@ -339,6 +450,8 @@
       for (const row of scores){
         const pos = Number(row.position);
         const medal = medalFor(pos);
+        const weightText = row.weight ? `${row.weight} kg` : "—";
+        
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td class="colPlace">
@@ -348,6 +461,7 @@
             </div>
           </td>
           <td><span class="athlete">${escapeHtml(row.athlete)}</span></td>
+          <td class="colWeight"><span class="weight">${escapeHtml(weightText)}</span></td>
           <td>
             <div class="result">
               <span>${escapeHtml(row.score)}</span>
@@ -362,7 +476,7 @@
     }
 
     (async function init(){
-      // Minimalny test połączenia (szybka diagnoza w konsoli)
+      // Minimalny test połączenia
       try {
         const { data, error } = await supabaseClient.from("challenges").select("id").limit(1);
         console.log("Supabase test challenges:", { data, error });
