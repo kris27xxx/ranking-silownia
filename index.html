@@ -21,6 +21,7 @@
       --gold2:#ffd98a;
       --red:#ff6b6b;
       --green:#51cf66;
+      --blue:#4dabf7;
       --shadow: 0 30px 80px rgba(0,0,0,.55);
       --radius: 20px;
     }
@@ -158,6 +159,8 @@
       max-width: 400px;
       width: 90%;
       box-shadow: 0 20px 60px rgba(0,0,0,.7);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modalContent h2 {
@@ -215,6 +218,14 @@
 
     .btnDanger {
       background: var(--red);
+      color: #fff;
+      padding: 8px 12px;
+      width: auto;
+      font-size: 14px;
+    }
+
+    .btnInfo {
+      background: var(--blue);
       color: #fff;
       padding: 8px 12px;
       width: auto;
@@ -426,6 +437,70 @@
       margin-bottom: 6px;
     }
 
+    .challengeList {
+      padding: 20px;
+    }
+
+    .challengeItem {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: rgba(0,0,0,.2);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .challengeItem.active {
+      border-color: rgba(215,180,106,.3);
+      background: rgba(215,180,106,.05);
+    }
+
+    .challengeInfo {
+      flex: 1;
+    }
+
+    .challengeInfo h4 {
+      margin: 0 0 4px;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .challengeInfo .period {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .challengeInfo .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(215,180,106,.2);
+      color: var(--gold2);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+
+    .checkbox-wrapper label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     @media (max-width: 760px){
       .header{ align-items:flex-start; flex-wrap: wrap; }
       .brand h1{ font-size: 34px; }
@@ -437,6 +512,7 @@
       .athlete{ font-size: 18px; }
       .logo{ width: 64px; height: 64px; }
       .actions { flex-direction: column; }
+      .challengeItem { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
   </style>
 </head>
@@ -455,9 +531,40 @@
     </div>
 
     <div class="adminPanel" id="adminPanel">
+      <!-- Zarządzanie Challengami -->
       <div class="card">
         <div class="cardTop">
-          <div class="title">Zarządzanie Rankingiem</div>
+          <div class="title">🏆 Zarządzanie Challengami</div>
+        </div>
+        <div style="padding: 20px;">
+          <h3 style="color: var(--gold2); margin-top: 0;">Dodaj nowy Challenge</h3>
+          <form id="addChallengeForm">
+            <div class="formGroup">
+              <label>Nazwa challengu (np. "Wyciskanie leżąc")</label>
+              <input type="text" id="challengeTitle" required>
+            </div>
+            <div class="formGroup">
+              <label>Okres (np. "Styczeń 2026")</label>
+              <input type="text" id="challengePeriod" required>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="challengeActive">
+              <label for="challengeActive">Ustaw jako aktualny challenge</label>
+            </div>
+            <button type="submit" class="btnPrimary">Utwórz Challenge</button>
+          </form>
+
+          <hr style="border: 1px solid rgba(255,255,255,.1); margin: 32px 0;">
+
+          <h3 style="color: var(--gold2); margin-bottom: 16px;">Istniejące Challengy</h3>
+          <div id="challengesList"></div>
+        </div>
+      </div>
+
+      <!-- Zarządzanie Zawodnikami -->
+      <div class="card">
+        <div class="cardTop">
+          <div class="title">👤 Zarządzanie Zawodnikami</div>
           <button class="adminBtn" id="logoutBtn" style="padding: 8px 16px; font-size: 14px;">Wyloguj</button>
         </div>
         <div style="padding: 20px;">
@@ -526,6 +633,7 @@
 
   </div>
 
+  <!-- Login Modal -->
   <div class="modal" id="loginModal">
     <div class="modalContent">
       <h2>🔒 Panel Admina</h2>
@@ -537,6 +645,7 @@
     </div>
   </div>
 
+  <!-- Edit Score Modal -->
   <div class="modal" id="editModal">
     <div class="modalContent">
       <h2>Edytuj zawodnika</h2>
@@ -573,12 +682,36 @@
     </div>
   </div>
 
+  <!-- Edit Challenge Modal -->
+  <div class="modal" id="editChallengeModal">
+    <div class="modalContent">
+      <h2>Edytuj Challenge</h2>
+      <form id="editChallengeForm">
+        <input type="hidden" id="editChallengeId">
+        <div class="formGroup">
+          <label>Nazwa challengu</label>
+          <input type="text" id="editChallengeTitle" required>
+        </div>
+        <div class="formGroup">
+          <label>Okres</label>
+          <input type="text" id="editChallengePeriod" required>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="editChallengeActive">
+          <label for="editChallengeActive">Ustaw jako aktualny challenge</label>
+        </div>
+        <button type="submit" class="btnPrimary">Zapisz zmiany</button>
+        <button type="button" class="btnSecondary" id="cancelEditChallenge">Anuluj</button>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     const SUPABASE_URL = "https://bzjtdwsvnhukmcjdvyen.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6anRkd3N2bmh1a21jamR2eWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNzc5NDgsImV4cCI6MjA4MTY1Mzk0OH0.o-W4nvYWzvEfxzIX2qJyDEhD21ncMVNBycFzinw7foo";
-    const ADMIN_PASSWORD = "asgard2025";
+    const ADMIN_PASSWORD = "asgard2025"; // ZMIEŃ TO!
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -594,7 +727,9 @@
     const publicView = document.getElementById("publicView");
     const loginModal = document.getElementById("loginModal");
     const editModal = document.getElementById("editModal");
+    const editChallengeModal = document.getElementById("editChallengeModal");
     const actionsHeader = document.getElementById("actionsHeader");
+    const challengesListEl = document.getElementById("challengesList");
 
     function medalFor(position){
       if (position === 1) return "🥇";
@@ -618,6 +753,7 @@
       if (isAdmin) {
         adminPanel.classList.add('show');
         actionsHeader.style.display = '';
+        loadChallengesList();
       } else {
         adminPanel.classList.remove('show');
         actionsHeader.style.display = 'none';
@@ -665,6 +801,39 @@
 
       setStatus("");
       return sorted;
+    }
+
+    async function loadChallengesList() {
+      const { data, error } = await supabaseClient
+        .from("challenges")
+        .select("id, title, period, is_active")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        challengesListEl.innerHTML = '<p style="color: var(--red);">Błąd ładowania challengy</p>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        challengesListEl.innerHTML = '<p style="color: var(--muted);">Brak challengy</p>';
+        return;
+      }
+
+      challengesListEl.innerHTML = data.map(ch => `
+        <div class="challengeItem ${ch.is_active ? 'active' : ''}">
+          <div class="challengeInfo">
+            <h4>
+              ${escapeHtml(ch.title)}
+              ${ch.is_active ? '<span class="badge">AKTUALNY</span>' : ''}
+            </h4>
+            <div class="period">${escapeHtml(ch.period)}</div>
+          </div>
+          <div class="actions">
+            <button class="btnEdit" onclick="editChallenge(${ch.id})">Edytuj</button>
+            <button class="btnDelete" onclick="deleteChallenge(${ch.id})">Usuń</button>
+          </div>
+        </div>
+      `).join('');
     }
 
     async function loadScores(challengeId){
@@ -770,6 +939,7 @@
       }
     }
 
+    // Login
     document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const password = document.getElementById('passwordInput').value;
@@ -806,6 +976,125 @@
       loadScores(currentChallengeId);
     });
 
+    // Add challenge
+    document.getElementById('addChallengeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('challengeTitle').value;
+      const period = document.getElementById('challengePeriod').value;
+      const isActive = document.getElementById('challengeActive').checked;
+
+      // Jeśli ustawiamy jako aktywny, dezaktywuj inne
+      if (isActive) {
+        await supabaseClient
+          .from("challenges")
+          .update({ is_active: false })
+          .neq('id', 0);
+      }
+
+      const { error } = await supabaseClient
+        .from("challenges")
+        .insert({ title, period, is_active: isActive });
+
+      if (error) {
+        alert('Błąd dodawania challengu: ' + error.message);
+      } else {
+        alert('Challenge utworzony!');
+        document.getElementById('addChallengeForm').reset();
+        await loadChallenges();
+        loadChallengesList();
+      }
+    });
+
+    // Edit challenge
+    window.editChallenge = async (id) => {
+      const { data, error } = await supabaseClient
+        .from("challenges")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        alert('Błąd ładowania danych');
+        return;
+      }
+
+      document.getElementById('editChallengeId').value = data.id;
+      document.getElementById('editChallengeTitle').value = data.title;
+      document.getElementById('editChallengePeriod').value = data.period;
+      document.getElementById('editChallengeActive').checked = data.is_active;
+
+      editChallengeModal.classList.add('show');
+    };
+
+    document.getElementById('editChallengeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = Number(document.getElementById('editChallengeId').value);
+      const title = document.getElementById('editChallengeTitle').value;
+      const period = document.getElementById('editChallengePeriod').value;
+      const isActive = document.getElementById('editChallengeActive').checked;
+
+      if (isActive) {
+        await supabaseClient
+          .from("challenges")
+          .update({ is_active: false })
+          .neq('id', id);
+      }
+
+      const { error } = await supabaseClient
+        .from("challenges")
+        .update({ title, period, is_active: isActive })
+        .eq("id", id);
+
+      if (error) {
+        alert('Błąd zapisywania: ' + error.message);
+      } else {
+        alert('Zapisano zmiany!');
+        editChallengeModal.classList.remove('show');
+        await loadChallenges();
+        loadChallengesList();
+        loadScores(currentChallengeId);
+      }
+    });
+
+    document.getElementById('cancelEditChallenge').addEventListener('click', () => {
+      editChallengeModal.classList.remove('show');
+    });
+
+    // Delete challenge
+    window.deleteChallenge = async (id) => {
+      if (!confirm('⚠️ Usunięcie challengu skasuje też wszystkie wyniki!\n\nNa pewno kontynuować?')) return;
+
+      // Usuń wyniki
+      await supabaseClient
+        .from("scores")
+        .delete()
+        .eq("challenge_id", id);
+
+      // Usuń challenge
+      const { error } = await supabaseClient
+        .from("challenges")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert('Błąd usuwania: ' + error.message);
+      } else {
+        alert('Challenge usunięty!');
+        await loadChallenges();
+        loadChallengesList();
+        
+        if (currentChallengeId === id) {
+          const chs = await loadChallenges();
+          if (chs && chs.length > 0) {
+            loadScores(chs[0].id);
+          }
+        }
+      }
+    };
+
+    // Add score
     document.getElementById('addScoreForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -838,6 +1127,7 @@
       }
     });
 
+    // Edit score
     window.editScore = async (id) => {
       const { data, error } = await supabaseClient
         .from("scores")
@@ -896,6 +1186,7 @@
       editModal.classList.remove('show');
     });
 
+    // Delete score
     window.deleteScore = async (id) => {
       if (!confirm('Na pewno usunąć tego zawodnika?')) return;
 
@@ -912,6 +1203,7 @@
       }
     };
 
+    // Init
     (async function init(){
       updateAdminUI();
 
